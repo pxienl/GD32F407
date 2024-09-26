@@ -52,7 +52,7 @@ static void EXTI_select(uint32_t GPIOx, exti_line_enum EXTI_x,uint32_t* Pin, rcu
   else if (EXTI_x == EXTI_15) *EXTI_SOURCE_PINx = EXTI_SOURCE_PIN15, *Pin = GPIO_PIN_15, *EXTIx_IRQn = EXTI10_15_IRQn;
 }
 
-void EXTI_Init(uint32_t GPIOx, exti_line_enum EXTI_x,
+void EXTI_init(uint32_t GPIOx, exti_line_enum EXTI_x,
                uint8_t PrePriority, uint8_t SubPriority,
                exti_trig_type_enum EXTI_TRIG) {
   rcu_periph_enum RCU_GPIOx;
