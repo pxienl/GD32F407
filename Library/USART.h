@@ -4,7 +4,7 @@
 #include "gd32f4xx.h"
 
 #define USART_PRINT 0
-#define USART_RX0
+// #define USART_RX0
 // #define USART_RX1
 // #define USART_RX2
 // #define UART_RX3
