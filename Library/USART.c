@@ -1,22 +1,6 @@
 #include "USART.h"
 #include "stdio.h"
-
-static void gpio_config(uint32_t gpio_periph, uint32_t alt_func_num, uint32_t pin){
-
-    if(gpio_periph == GPIOA) rcu_periph_clock_enable(RCU_GPIOA);
-    else if(gpio_periph == GPIOB) rcu_periph_clock_enable(RCU_GPIOB);
-    else if(gpio_periph == GPIOC) rcu_periph_clock_enable(RCU_GPIOC);
-    else if(gpio_periph == GPIOD) rcu_periph_clock_enable(RCU_GPIOD);
-    else if(gpio_periph == GPIOE) rcu_periph_clock_enable(RCU_GPIOE);
-    else if(gpio_periph == GPIOF) rcu_periph_clock_enable(RCU_GPIOF);
-    else if(gpio_periph == GPIOG) rcu_periph_clock_enable(RCU_GPIOG);
-    else if(gpio_periph == GPIOH) rcu_periph_clock_enable(RCU_GPIOH);
-    else if(gpio_periph == GPIOI) rcu_periph_clock_enable(RCU_GPIOI);
-
-    gpio_af_set(gpio_periph, alt_func_num, pin);
-    gpio_mode_set(gpio_periph, GPIO_MODE_AF, GPIO_PUPD_PULLUP, pin);
-    gpio_output_options_set(gpio_periph, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, pin);
-}
+#include "GPIO.h"
 
 static void usart_config(uint32_t usart_periph,uint32_t baudval,uint8_t nvic_irq_pre_priority, uint8_t nvic_irq_sub_priority){
     if(usart_periph == USART1)  rcu_periph_clock_enable(RCU_USART1);
@@ -50,7 +34,7 @@ static void usart_config(uint32_t usart_periph,uint32_t baudval,uint8_t nvic_irq
 }
 
 void usart_init(uint32_t usart_periph,uint32_t gpio_periph, uint32_t alt_func_num, uint32_t pin){
-    gpio_config(gpio_periph,alt_func_num,pin);
+    GPIO_af_init(gpio_periph,alt_func_num,GPIO_PUPD_NONE,pin);
     usart_config(usart_periph, 115200, 0, 0);
 }
 

@@ -1,12 +1,6 @@
 #include "EXTI.h"
 #include "stdio.h"
-
-static void GPIO_config(rcu_periph_enum RCU_GPIOx, uint32_t GPIOx,
-                        uint32_t Pin) {
-  // GPIO设置
-  rcu_periph_clock_enable(RCU_GPIOx);
-  gpio_mode_set(GPIOx, GPIO_MODE_INPUT, GPIO_PUPD_NONE, Pin);
-}
+#include "GPIO.h"
 
 static void EXTI_config(exti_line_enum EXTI_x, exti_trig_type_enum EXTI_TRIG,
                         uint8_t EXTI_SOURCE_GPIOx, uint8_t EXTI_SOURCE_PINx,
@@ -20,19 +14,19 @@ static void EXTI_config(exti_line_enum EXTI_x, exti_trig_type_enum EXTI_TRIG,
   exti_interrupt_flag_clear(EXTI_x);
 }
 
-static void EXTI_select(uint32_t GPIOx, exti_line_enum EXTI_x,uint32_t* Pin, rcu_periph_enum* RCU_GPIOx,
+static void EXTI_select(uint32_t GPIOx, exti_line_enum EXTI_x,uint32_t* Pin, 
                         uint8_t* EXTI_SOURCE_GPIOx,uint8_t* EXTI_SOURCE_PINx,
                         IRQn_Type* EXTIx_IRQn) {
 
-  if (GPIOx == GPIOA)      *RCU_GPIOx = RCU_GPIOA, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOA;
-  else if (GPIOx == GPIOB) *RCU_GPIOx = RCU_GPIOB, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOB;
-  else if (GPIOx == GPIOC) *RCU_GPIOx = RCU_GPIOC, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOC;
-  else if (GPIOx == GPIOD) *RCU_GPIOx = RCU_GPIOD, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOD;
-  else if (GPIOx == GPIOE) *RCU_GPIOx = RCU_GPIOE, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOE;
-  else if (GPIOx == GPIOF) *RCU_GPIOx = RCU_GPIOF, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOF;
-  else if (GPIOx == GPIOG) *RCU_GPIOx = RCU_GPIOG, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOG;
-  else if (GPIOx == GPIOH) *RCU_GPIOx = RCU_GPIOH, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOH;
-  else if (GPIOx == GPIOI) *RCU_GPIOx = RCU_GPIOI, *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOI;
+  if (GPIOx == GPIOA)      *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOA;
+  else if (GPIOx == GPIOB) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOB;
+  else if (GPIOx == GPIOC) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOC;
+  else if (GPIOx == GPIOD) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOD;
+  else if (GPIOx == GPIOE) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOE;
+  else if (GPIOx == GPIOF) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOF;
+  else if (GPIOx == GPIOG) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOG;
+  else if (GPIOx == GPIOH) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOH;
+  else if (GPIOx == GPIOI) *EXTI_SOURCE_GPIOx = EXTI_SOURCE_GPIOI;
 
   if (EXTI_x == EXTI_0)       *EXTI_SOURCE_PINx = EXTI_SOURCE_PIN0,  *Pin = GPIO_PIN_0,  *EXTIx_IRQn = EXTI0_IRQn;
   else if (EXTI_x == EXTI_1)  *EXTI_SOURCE_PINx = EXTI_SOURCE_PIN1,  *Pin = GPIO_PIN_1,  *EXTIx_IRQn = EXTI1_IRQn;
@@ -55,24 +49,22 @@ static void EXTI_select(uint32_t GPIOx, exti_line_enum EXTI_x,uint32_t* Pin, rcu
 void EXTI_init(uint32_t GPIOx, exti_line_enum EXTI_x,
                uint8_t PrePriority, uint8_t SubPriority,
                exti_trig_type_enum EXTI_TRIG) {
-  rcu_periph_enum RCU_GPIOx;
   uint32_t Pin;
   uint8_t EXTI_SOURCE_GPIOx, EXTI_SOURCE_PINx;
   IRQn_Type EXTIx_IRQn;
 
-  EXTI_select(GPIOx, EXTI_x,&Pin,&RCU_GPIOx,&EXTI_SOURCE_GPIOx,&EXTI_SOURCE_PINx,&EXTIx_IRQn);
-  GPIO_config(RCU_GPIOx,GPIOx,Pin);
+  EXTI_select(GPIOx, EXTI_x,&Pin,&EXTI_SOURCE_GPIOx,&EXTI_SOURCE_PINx,&EXTIx_IRQn);
+  GPIO_input_init(GPIOx,GPIO_PUPD_NONE,Pin);
   EXTI_config(EXTI_x,EXTI_TRIG,EXTI_SOURCE_GPIOx,EXTI_SOURCE_PINx,EXTIx_IRQn,PrePriority,SubPriority);
 }
 void EXTI_soft_init(exti_line_enum EXTI_x,
                uint8_t PrePriority, uint8_t SubPriority,
                exti_trig_type_enum EXTI_TRIG) {
-  rcu_periph_enum RCU_GPIOx;
   uint32_t Pin;
   uint8_t EXTI_SOURCE_GPIOx, EXTI_SOURCE_PINx;
   IRQn_Type EXTIx_IRQn;
 
-  EXTI_select(0, EXTI_x, &Pin, &RCU_GPIOx, &EXTI_SOURCE_GPIOx, &EXTI_SOURCE_PINx, &EXTIx_IRQn);
+  EXTI_select(0, EXTI_x, &Pin, &EXTI_SOURCE_GPIOx, &EXTI_SOURCE_PINx, &EXTIx_IRQn);
   
   rcu_periph_clock_enable(RCU_SYSCFG);
   exti_init(EXTI_x, EXTI_INTERRUPT, EXTI_TRIG);
