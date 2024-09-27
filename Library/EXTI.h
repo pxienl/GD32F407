@@ -3,8 +3,8 @@
 
 #include "gd32f4xx.h"
 
-#define EXTI_0_RUN
-#define EXTI_1_RUN
+// #define EXTI_0_RUN
+// #define EXTI_1_RUN
 // #define EXTI_2_RUN
 // #define EXTI_3_RUN
 // #define EXTI_4_RUN
