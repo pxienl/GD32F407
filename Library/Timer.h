@@ -15,4 +15,11 @@ void PWM_init(uint32_t TIMERx,uint16_t prescaler, uint32_t period,
 void PWM_update(uint32_t TIMERx, uint16_t TIMER_CH_x, uint16_t pulse);
 void PWM_state_start(uint32_t TIMERx, uint16_t TIMER_CH_x);
 void PWM_state_stop(uint32_t TIMERx, uint16_t TIMER_CH_x);
+
+void PWM_state_complementary_start(uint32_t TIMERx, uint16_t TIMER_CH_x);
+void PWM_state_complementary_stop(uint32_t TIMERx, uint16_t TIMER_CH_x);
+
+void PWM_advanced_init(uint32_t TIMERx,uint16_t prescaler, uint32_t period,
+                  uint16_t TIMER_CH_x, uint16_t TIMER_OC_MODE,uint16_t pulse);
+
 #endif
