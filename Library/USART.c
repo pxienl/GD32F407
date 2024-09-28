@@ -38,11 +38,46 @@ static void usart_config(uint32_t usart_periph,uint32_t baudval,uint8_t nvic_irq
     else if(usart_periph == USART5) nvic_irq_enable(USART5_IRQn,nvic_irq_pre_priority,nvic_irq_sub_priority);
 }
 
+/*
+\brief      USART init 初始化
+    \param[in]  usart_periph: USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+
+    \param[in]  gpio_periph: GPIO port                            GPIO 端口
+                only one parameter can be selected which is shown as below:
+      \arg        GPIOx(x = A,B,C,D,E,F,G,H,I)
+    \param[in]  alt_func_num: GPIO pin af function 引脚对应的复用的功能，以及对应的AF位很重要
+      \arg        GPIO_AF_0: SYSTEM
+      \arg        GPIO_AF_1: TIMER0, TIMER1
+      \arg        GPIO_AF_2: TIMER2, TIMER3, TIMER4
+      \arg        GPIO_AF_3: TIMER7, TIMER8, TIMER9, TIMER10
+      \arg        GPIO_AF_4: I2C0, I2C1, I2C2
+      \arg        GPIO_AF_5: SPI0, SPI1, SPI2, SPI3, SPI4, SPI5
+      \arg        GPIO_AF_6: SPI2, SPI3, SPI4
+      \arg        GPIO_AF_7: USART0, USART1, USART2, SPI1, SPI2
+      \arg        GPIO_AF_8: UART3, UART4, USART5, UART6, UART7
+      \arg        GPIO_AF_9: CAN0, CAN1, TLI, TIMER11, TIMER12, TIMER13, I2C1, I2C2, CTC
+      \arg        GPIO_AF_10: USB_FS, USB_HS
+      \arg        GPIO_AF_11: ENET
+      \arg        GPIO_AF_12: EXMC, SDIO, USB_HS
+      \arg        GPIO_AF_13: DCI
+      \arg        GPIO_AF_14: TLI
+      \arg        GPIO_AF_15: EVENTOUT
+    \param[in]  pin: GPIO pin            GPIO的引脚
+                one or more parameters can be selected which are shown as below:
+      \arg        GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
+    \retval     none
+*/
 void usart_init(uint32_t usart_periph,uint32_t gpio_periph, uint32_t alt_func_num, uint32_t pin){
     GPIO_af_init(gpio_periph,alt_func_num,GPIO_PUPD_NONE,pin);
     usart_config(usart_periph, 115200, 0, 1);
 }
 
+/*
+\brief      USART 发送一个字节的函数
+    \param[in]  usart_periph: USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+		\param[in]  byte: 需要传输的一个字节
+    \retval     none
+*/
 void send_byte(uint32_t usart_periph,uint8_t byte){
     if(busy){
         usart_data_transmit(usart_periph, buffer);
@@ -56,10 +91,23 @@ void send_byte(uint32_t usart_periph,uint8_t byte){
     
 }
 
+/*
+\brief      USART 发送一个字节的函数
+    \param[in]  usart_periph: USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+		\param[in]  *str: 需要传输的一整个字符串 (指针) 根据字符串的特性，必须在后面加上一个‘\0’ 检索到就关闭发送
+		\retval     none
+*/
 void send_string(uint32_t usart_periph,char *str){
     while (str&&*str) send_byte(usart_periph,*str++);
 }
 
+/*
+\brief      USART 发送一个字节的函数
+    \param[in]  usart_periph: USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+		\param[in]  *data: 	需要传输的字节数组
+		\param[in]  length: 字节数组的长度
+    \retval     none
+*/
 void send_array(uint32_t usart_periph,uint8_t *data,uint32_t length){
     while(length--) send_byte(usart_periph,*data++);
 }
@@ -182,7 +230,13 @@ static void uart_dma_perien_select(uint32_t usart_periph,dma_channel_enum channe
     else if (usart_periph == UART7   &&  channelx == DMA_CH6) dma_channel_subperipheral_select(DMA0,channelx,DMA_SUBPERI5); // UART7_RX
     else if (usart_periph == UART7   &&  channelx == DMA_CH0) dma_channel_subperipheral_select(DMA0,channelx,DMA_SUBPERI5); // UART7_TX
 }
-
+/**
+ * @brief 此函数通过开启DMA ， 让DMA实现USART发送的功能
+ * 
+ * @param usart_periph   usart_periph: USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+ * @param dma_periph  dma_periph  :  DMAx(x=0,1)
+ * @param channelx  channelx  :  DMA_CHx(x=0..7)
+ */
 void usart_dma_tx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enum channelx){
     DMA_select(dma_periph);
     dma_deinit(dma_periph,channelx);
@@ -197,6 +251,13 @@ void usart_dma_tx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enu
     usart_dma_tx_set(usart_periph,dma_periph,channelx);
 }
 
+/**
+ * @brief 此函数通过开启DMA ， 让DMA实现USART接收的功能
+ * 
+ * @param usart_periph  usart_periph  :  USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+ * @param dma_periph  dma_periph  :  DMAx(x=0,1)
+ * @param channelx  channelx  :  DMA_CHx(x=0..7)
+ */
 void usart_dma_rx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enum channelx){
     DMA_select(dma_periph);
     dma_deinit(dma_periph,channelx);
@@ -218,7 +279,13 @@ void usart_dma_rx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enu
     dma_flag_clear(dma_periph,channelx,DMA_FLAG_FTF);
     dma_channel_enable(dma_periph,channelx);
 }
-
+/**
+ * @brief 此函数通过DMA发送数据
+ * 
+ * @param usart_periph usart_periph  :  USARTx(x=0,1,2,5)/UARTx(x=3,4,6,7)   usart的序列号
+ * @param data  指针，指向 目的地址 
+ * @param len   数据长度 [1,255]
+ */
 void usart_dma_send(uint32_t usart_periph,uint8_t * data,uint8_t len){
     uint32_t dma_periph = NULL;
     dma_channel_enum channelx = NULL;
