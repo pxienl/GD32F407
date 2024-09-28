@@ -35,8 +35,9 @@ OF SUCH DAMAGE.
 #ifndef __MAIN_H
 #define __MAIN_H
 
-/* led spark function */
-void led_spark(void);
+#include "gd32f4xx.h"
+#include "stdbool.h"
+#include "stdio.h"
 
 #endif /* __MAIN_H */
 

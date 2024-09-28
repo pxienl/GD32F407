@@ -454,6 +454,11 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_timer.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -484,6 +489,11 @@
               <FileName>GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Library\GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DMA.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\DMA.c</FilePath>
             </File>
           </Files>
         </Group>
