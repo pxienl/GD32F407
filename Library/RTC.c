@@ -60,6 +60,6 @@ void RTC_Alarm_IRQHandler(){
     if(exti_interrupt_flag_get(RTC_ALARM_EXTI) == SET){
         exti_interrupt_flag_clear(RTC_ALARM_EXTI);
         rtc_flag_clear(RTC_FLAG_ALRM0);
-        RTC_alarm_handler();
+        if(RTC_alarm_handler != NULL) RTC_alarm_handler();
     }
 }
