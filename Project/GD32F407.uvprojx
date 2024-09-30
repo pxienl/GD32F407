@@ -459,6 +459,16 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32f4xx_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -494,6 +504,11 @@
               <FileName>DMA.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Library\DMA.c</FilePath>
+            </File>
+            <File>
+              <FileName>RTC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\RTC.c</FilePath>
             </File>
           </Files>
         </Group>
