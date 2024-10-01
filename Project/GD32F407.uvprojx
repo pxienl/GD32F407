@@ -469,6 +469,16 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_fwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_fwdgt.c</FilePath>
+            </File>
+            <File>
+              <FileName>gd32f4xx_wwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -509,6 +519,11 @@
               <FileName>RTC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Library\RTC.c</FilePath>
+            </File>
+            <File>
+              <FileName>WDGT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\WDGT.c</FilePath>
             </File>
           </Files>
         </Group>
