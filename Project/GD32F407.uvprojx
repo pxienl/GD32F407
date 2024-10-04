@@ -479,6 +479,11 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -524,6 +529,11 @@
               <FileName>WDGT.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Library\WDGT.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\I2C.c</FilePath>
             </File>
           </Files>
         </Group>
