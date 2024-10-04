@@ -10,4 +10,16 @@ void I2C_hardware_init();
 void I2C_hardware_write(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
 void I2C_hardware_read(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
 
+typedef struct{
+    uint32_t SCL_GPIO;
+    uint32_t SCL_PIN;
+    uint32_t SDA_GPIO;
+    uint32_t SDA_PIN;
+    uint32_t delay_us;
+}I2C_soft_struct;
+
+I2C_soft_struct I2C_soft_init(uint32_t SCL_GPIO, uint32_t SCL_PIN,uint32_t SDA_GPIO, uint32_t SDA_PIN, uint32_t freq);
+void I2C_soft_write(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
+void I2C_soft_read(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
+
 #endif

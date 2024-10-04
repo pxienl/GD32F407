@@ -122,3 +122,214 @@ void I2C_hardware_read(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
     
     I2C_hardware_stop(I2C0);
 }
+
+static uint32_t I2C_soft_delay(uint32_t freq){
+    return 1000 / freq / 2;
+}
+
+static inline void I2C_soft_output(I2C_soft_struct* i2c){
+    GPIO_output_init(i2c->SCL_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_OD,i2c->SCL_PIN);
+    GPIO_output_init(i2c->SDA_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_OD,i2c->SDA_PIN);
+}
+
+static inline void I2C_soft_input(I2C_soft_struct* i2c){
+    GPIO_output_init(i2c->SCL_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_OD,i2c->SCL_PIN);
+    GPIO_input_init(i2c->SDA_GPIO,GPIO_PUPD_NONE,i2c->SDA_PIN);
+}
+
+I2C_soft_struct I2C_soft_init(uint32_t SCL_GPIO, uint32_t SCL_PIN,uint32_t SDA_GPIO, uint32_t SDA_PIN, uint32_t freq){
+    I2C_soft_struct i2c;
+    i2c.SCL_GPIO = SCL_GPIO;
+    i2c.SCL_PIN  = SCL_PIN;
+    i2c.SDA_GPIO = SDA_GPIO;
+    i2c.SDA_PIN  = SDA_PIN;
+    i2c.delay_us = I2C_soft_delay(freq);
+    GPIO_output_init(SCL_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_OD,SCL_PIN);
+    GPIO_output_init(SDA_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_OD,SDA_PIN);
+
+    return i2c;
+}
+
+static inline void I2C_soft_start(I2C_soft_struct* i2c){
+    I2C_soft_output(i2c);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_set(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_reset(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+}
+
+static inline void I2C_soft_stop(I2C_soft_struct* i2c){
+    I2C_soft_output(i2c);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_reset(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_set(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+}
+
+static inline void I2C_soft_send_bit(I2C_soft_struct* i2c,uint8_t bit){
+    I2C_soft_output(i2c);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_write(i2c->SDA_GPIO,i2c->SDA_PIN,!bit);
+
+    gpio_bit_write(i2c->SDA_GPIO,i2c->SDA_PIN,bit);
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_write(i2c->SDA_GPIO,i2c->SDA_PIN,!bit);
+    delay_1us(i2c->delay_us);
+}
+
+static inline void I2C_soft_send_byte(I2C_soft_struct* i2c,uint8_t byte){
+    I2C_soft_output(i2c);
+
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        I2C_soft_send_bit(i2c,byte & (0x80>>i));
+    }
+    
+}
+
+static uint8_t I2C_soft_recv_bit(I2C_soft_struct* i2c){
+    uint8_t bit;
+    I2C_soft_input(i2c);
+
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    bit = gpio_input_bit_get(i2c->SDA_GPIO,i2c->SDA_PIN);
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    return bit;
+}
+
+static uint8_t I2C_soft_recv_byte(I2C_soft_struct* i2c){
+    I2C_soft_input(i2c);
+    uint8_t byte;
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        byte <<= 1;
+        byte += I2C_soft_recv_bit(i2c);
+    }
+    return byte;
+}
+
+static uint8_t I2C_soft_wait_ack(I2C_soft_struct* i2c){
+    I2C_soft_output(i2c);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_reset(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_set(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    I2C_soft_input(i2c);
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    if(gpio_input_bit_get(i2c->SDA_GPIO,i2c->SDA_PIN)) return 1;
+    
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    I2C_soft_output(i2c);
+    gpio_bit_set(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    return 0;
+}
+
+static uint8_t I2C_soft_send_ack(I2C_soft_struct* i2c){
+    I2C_soft_output(i2c);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_reset(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    return 0;
+}
+
+static uint8_t I2C_soft_send_nack(I2C_soft_struct* i2c){
+    I2C_soft_output(i2c);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    gpio_bit_set(i2c->SDA_GPIO,i2c->SDA_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_set(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    gpio_bit_reset(i2c->SCL_GPIO,i2c->SCL_PIN);
+    delay_1us(i2c->delay_us);
+
+    return 0;
+}
+
+void I2C_soft_write(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
+
+    I2C_soft_start(i2c);
+
+    I2C_soft_send_byte(i2c,addr << 1);
+    if(I2C_soft_wait_ack(i2c)) return;
+
+    I2C_soft_send_byte(i2c,reg);
+    if(I2C_soft_wait_ack(i2c)) return;
+
+    uint8_t* p = data;
+    while(len--){
+        I2C_soft_send_byte(i2c,*p);
+        if(I2C_soft_wait_ack(i2c)) return;
+        p++;
+    }
+
+    I2C_soft_stop(i2c);
+
+}
+
+void I2C_soft_read(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
+
+    I2C_soft_start(i2c);
+
+    I2C_soft_send_byte(i2c,addr << 1);
+    if(I2C_soft_wait_ack(i2c)) return;
+
+    I2C_soft_send_byte(i2c,reg);
+    if(I2C_soft_wait_ack(i2c)) return;
+
+    I2C_soft_start(i2c);
+
+    I2C_soft_send_byte(i2c,(addr << 1) | 1);
+    if(I2C_soft_wait_ack(i2c)) return;
+
+    for (uint32_t i = 0; i < len; i++)
+    {
+        data[i] = I2C_soft_recv_byte(i2c);
+        if(i != len-1) I2C_soft_send_ack(i2c);
+        else I2C_soft_send_nack(i2c);
+    }
+    
+    I2C_soft_stop(i2c);
+
+}
