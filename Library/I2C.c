@@ -2,13 +2,14 @@
 #include "GPIO.h"
 #include "systick.h"
 
-void I2C_hardware_init(){
-
-    rcu_periph_clock_enable(RCU_I2C0);
-    i2c_deinit(I2C0);
-    i2c_clock_config(I2C0,400000,I2C_DTCY_2);
-    i2c_enable(I2C0);
-    i2c_ack_config(I2C0,I2C_ACK_ENABLE);
+void I2C_hardware_init(uint32_t i2c_periph,uint32_t speed){
+         if(i2c_periph == I2C0) rcu_periph_clock_enable(RCU_I2C0);
+    else if(i2c_periph == I2C1) rcu_periph_clock_enable(RCU_I2C1);
+    else if(i2c_periph == I2C2) rcu_periph_clock_enable(RCU_I2C2);
+    i2c_deinit(i2c_periph);
+    i2c_clock_config(i2c_periph,speed,I2C_DTCY_2);
+    i2c_enable(i2c_periph);
+    i2c_ack_config(i2c_periph,I2C_ACK_ENABLE);
 }
 
 
@@ -99,28 +100,28 @@ static uint8_t I2C_hardware_recv(uint32_t i2c_periph, uint8_t* data, uint32_t le
     return 0;
 }
 
-void I2C_hardware_write(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
-    I2C_hardware_start(I2C0,1);
-    I2C_hardware_address(I2C0,addr<<1,I2C_TRANSMITTER);
-    I2C_hardware_send(I2C0,reg);
+void I2C_hardware_write(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
+    I2C_hardware_start(i2c_periph,1);
+    I2C_hardware_address(i2c_periph,addr<<1,I2C_TRANSMITTER);
+    I2C_hardware_send(i2c_periph,reg);
     for (uint32_t i = 0; i < len; i++)
     {
-        I2C_hardware_send(I2C0,data[i]);
+        I2C_hardware_send(i2c_periph,data[i]);
     }
-    I2C_hardware_stop(I2C0);
+    I2C_hardware_stop(i2c_periph);
 }
 
-void I2C_hardware_read(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
-    I2C_hardware_start(I2C0,1);
-    I2C_hardware_address(I2C0,addr<<1,I2C_TRANSMITTER);
-    I2C_hardware_send(I2C0,reg);
+void I2C_hardware_read(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
+    I2C_hardware_start(i2c_periph,1);
+    I2C_hardware_address(i2c_periph,addr<<1,I2C_TRANSMITTER);
+    I2C_hardware_send(i2c_periph,reg);
 
-    I2C_hardware_start(I2C0,0);
-    I2C_hardware_address(I2C0,(addr<<1) | 1,I2C_RECEIVER);
+    I2C_hardware_start(i2c_periph,0);
+    I2C_hardware_address(i2c_periph,(addr<<1) | 1,I2C_RECEIVER);
 
-    I2C_hardware_recv(I2C0,data,len);
+    I2C_hardware_recv(i2c_periph,data,len);
     
-    I2C_hardware_stop(I2C0);
+    I2C_hardware_stop(i2c_periph);
 }
 
 static uint32_t I2C_soft_delay(uint32_t freq){
