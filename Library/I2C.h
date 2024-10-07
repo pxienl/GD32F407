@@ -5,10 +5,10 @@
 
 #define	I2C_HARDWARE_TIMEOUT	50000
 
-void I2C_hardware_init();
+void I2C_hardware_init(uint32_t i2c_periph,uint32_t speed);
 
-void I2C_hardware_write(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
-void I2C_hardware_read(uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
+void I2C_hardware_write(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
+void I2C_hardware_read(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
 
 typedef struct{
     uint32_t SCL_GPIO;

@@ -102,7 +102,7 @@ static uint8_t I2C_hardware_recv(uint32_t i2c_periph, uint8_t* data, uint32_t le
 
 void I2C_hardware_write(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
     I2C_hardware_start(i2c_periph,1);
-    I2C_hardware_address(i2c_periph,addr<<1,I2C_TRANSMITTER);
+    I2C_hardware_address(i2c_periph,addr,I2C_TRANSMITTER);
     I2C_hardware_send(i2c_periph,reg);
     for (uint32_t i = 0; i < len; i++)
     {
@@ -113,11 +113,11 @@ void I2C_hardware_write(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t
 
 void I2C_hardware_read(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len){
     I2C_hardware_start(i2c_periph,1);
-    I2C_hardware_address(i2c_periph,addr<<1,I2C_TRANSMITTER);
+    I2C_hardware_address(i2c_periph,addr & ~1,I2C_TRANSMITTER);
     I2C_hardware_send(i2c_periph,reg);
 
     I2C_hardware_start(i2c_periph,0);
-    I2C_hardware_address(i2c_periph,(addr<<1) | 1,I2C_RECEIVER);
+    I2C_hardware_address(i2c_periph,addr | 1,I2C_RECEIVER);
 
     I2C_hardware_recv(i2c_periph,data,len);
     
@@ -292,7 +292,7 @@ void I2C_soft_write(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* da
 
     I2C_soft_start(i2c);
 
-    I2C_soft_send_byte(i2c,addr << 1);
+    I2C_soft_send_byte(i2c,addr);
     if(I2C_soft_wait_ack(i2c)) return;
 
     I2C_soft_send_byte(i2c,reg);
@@ -313,7 +313,7 @@ void I2C_soft_read(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* dat
 
     I2C_soft_start(i2c);
 
-    I2C_soft_send_byte(i2c,addr << 1);
+    I2C_soft_send_byte(i2c,addr & ~1);
     if(I2C_soft_wait_ack(i2c)) return;
 
     I2C_soft_send_byte(i2c,reg);
@@ -321,7 +321,7 @@ void I2C_soft_read(I2C_soft_struct* i2c,uint32_t addr, uint32_t reg,uint8_t* dat
 
     I2C_soft_start(i2c);
 
-    I2C_soft_send_byte(i2c,(addr << 1) | 1);
+    I2C_soft_send_byte(i2c,addr | 1);
     if(I2C_soft_wait_ack(i2c)) return;
 
     for (uint32_t i = 0; i < len; i++)

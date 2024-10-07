@@ -2,7 +2,9 @@
 #include "systick.h"
 #include "DMA.h"
 #include "USART.h"
-#include "WDGT.h"
+#include "GPIO.h"
+#include "I2C.h"
+#include "i2c_oled.h"
 
 void RX0_recv(uint8_t *rxbuffer,uint32_t len){
     usart_dma_send(USART0,rxbuffer,len);
@@ -17,12 +19,14 @@ int main(void)
     usart_dma_rx_init(USART0,DMA1,DMA_CH5);
 
     printf("init");
+    
+    GPIO_af_init(GPIOB,GPIO_AF_4,GPIO_PUPD_PULLUP,GPIO_PIN_6|GPIO_PIN_7);
 
-    FWDGT_init(2000,FWDGT_PSC_DIV64); // wait 4s to reboot
-
-    while(1) {
-        delay_1ms(3500);
-        fwdgt_counter_reload();
-        printf("feed");
-    }
+    uint8_t t=' ';
+	delay_1ms(500);
+ 	OLED_Init();				//初始化OLED
+	while(1) 
+	{
+		
+	}
 }
