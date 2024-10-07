@@ -7,6 +7,11 @@
 
 void I2C_hardware_init(uint32_t i2c_periph,uint32_t speed);
 
+uint8_t I2C_hardware_start(uint32_t i2c_periph,uint8_t checkBSY);
+uint8_t I2C_hardware_stop(uint32_t i2c_periph);
+uint8_t I2C_hardware_address(uint32_t i2c_periph, uint32_t addr, uint32_t trandirection);
+uint8_t I2C_hardware_send(uint32_t i2c_periph, uint8_t data);
+
 void I2C_hardware_write(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
 void I2C_hardware_read(uint32_t i2c_periph, uint32_t addr, uint32_t reg,uint8_t* data, uint32_t len);
 

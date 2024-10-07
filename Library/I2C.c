@@ -33,7 +33,7 @@ static uint8_t I2C_hardware_waitn(uint32_t i2c_periph, uint32_t flag) {
 	return 0;
 }
 
-static uint8_t I2C_hardware_start(uint32_t i2c_periph,uint8_t checkBSY){
+uint8_t I2C_hardware_start(uint32_t i2c_periph,uint8_t checkBSY){
     // 等待I2C闲置
     if(checkBSY && I2C_hardware_waitn(i2c_periph,I2C_FLAG_I2CBSY)) return 1;
     // start
@@ -43,7 +43,7 @@ static uint8_t I2C_hardware_start(uint32_t i2c_periph,uint8_t checkBSY){
     return 0;
 }
 
-static uint8_t I2C_hardware_stop(uint32_t i2c_periph){
+uint8_t I2C_hardware_stop(uint32_t i2c_periph){
     // stop
     i2c_stop_on_bus(i2c_periph);
 
@@ -62,7 +62,7 @@ static uint8_t I2C_hardware_stop(uint32_t i2c_periph){
     \param[out] none
     \retval     none
 */
-static uint8_t I2C_hardware_address(uint32_t i2c_periph, uint32_t addr, uint32_t trandirection){
+uint8_t I2C_hardware_address(uint32_t i2c_periph, uint32_t addr, uint32_t trandirection){
     // 发送设备地址
     i2c_master_addressing(i2c_periph, addr, trandirection);
     // 等待地址发送完成
@@ -71,7 +71,7 @@ static uint8_t I2C_hardware_address(uint32_t i2c_periph, uint32_t addr, uint32_t
     return 0;
 }
 
-static uint8_t I2C_hardware_send(uint32_t i2c_periph, uint8_t data){
+uint8_t I2C_hardware_send(uint32_t i2c_periph, uint8_t data){
     // 等待发送数据缓冲区为空
     if(I2C_hardware_wait(i2c_periph,I2C_FLAG_TBE)) return 6;
 
