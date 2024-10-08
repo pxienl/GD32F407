@@ -8,9 +8,9 @@
 
 #define USART_DMA
 
-#define USART_DMA_RX 0
+// #define USART_DMA_RX 0
 
-#define USART_RX0
+// #define USART_RX0
 // #define USART_RX1
 // #define USART_RX2
 // #define UART_RX3

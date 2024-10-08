@@ -112,6 +112,7 @@ void send_array(uint32_t usart_periph,uint8_t *data,uint32_t length){
     while(length--) send_byte(usart_periph,*data++);
 }
 
+#ifdef USART_DMA
 uint32_t USART0_dma_periph = NULL;
 uint32_t USART0_tx_dma_channel = NULL;
 uint32_t USART0_rx_dma_channel = NULL;
@@ -251,6 +252,8 @@ void usart_dma_tx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enu
     usart_dma_tx_set(usart_periph,dma_periph,channelx);
 }
 
+#ifdef USART_DMA_RX
+
 /**
  * @brief 此函数通过开启DMA ， 让DMA实现USART接收的功能
  * 
@@ -279,6 +282,9 @@ void usart_dma_rx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enu
     dma_flag_clear(dma_periph,channelx,DMA_FLAG_FTF);
     dma_channel_enable(dma_periph,channelx);
 }
+
+#endif
+
 /**
  * @brief 此函数通过DMA发送数据
  * 
@@ -298,6 +304,7 @@ void usart_dma_send(uint32_t usart_periph,uint8_t * data,uint8_t len){
     while(RESET == dma_flag_get(dma_periph, channelx, DMA_FLAG_FTF));
     dma_flag_clear(dma_periph, channelx, DMA_FLAG_FTF);
 }
+#endif
 
 #ifdef USART_PRINT
 int fputc(int ch,FILE *f){
