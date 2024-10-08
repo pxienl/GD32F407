@@ -2,10 +2,11 @@
 #include "systick.h"
 #include "DMA.h"
 #include "USART.h"
-#include "WDGT.h"
+#include "ADC.h"
+#include "GPIO.h"
 
 void RX0_recv(uint8_t *rxbuffer,uint32_t len){
-    usart_dma_send(USART0,rxbuffer,len);
+  printf("RX0 recv");
 }
 
 int main(void)
@@ -14,15 +15,19 @@ int main(void)
     systick_config();
     usart_init(USART0,GPIOA,GPIO_AF_7,GPIO_PIN_9 | GPIO_PIN_10);
     usart_dma_tx_init(USART0,DMA1,DMA_CH7);
-    usart_dma_rx_init(USART0,DMA1,DMA_CH5);
+    // usart_dma_rx_init(USART0,DMA1,DMA_CH5);
 
-    printf("init");
+    // uint16_t buffer[2] = {0};
+    // uint8_t channels[] = {ADC_CHANNEL_14,ADC_CHANNEL_16};
 
-    FWDGT_init(2000,FWDGT_PSC_DIV64); // wait 4s to reboot
+    GPIO_analog_init(GPIOA,GPIO_PUPD_NONE,GPIO_PIN_1);
+    ADC_single_init(ADC0,ADC_CHANNEL_1);
+    
+    // ADC_multiple_dma_init(ADC0, channels,2, buffer,DMA1,DMA_CH4,DMA_SUBPERI0);
+
 
     while(1) {
-        delay_1ms(3500);
-        fwdgt_counter_reload();
-        printf("feed");
+      printf("%d\n", ADC_get(ADC0,ADC_INSERTED_CHANNEL_0));
+      delay_1ms(10);
     }
 }

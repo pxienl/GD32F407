@@ -484,6 +484,11 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -534,6 +539,11 @@
               <FileName>I2C.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Library\I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\ADC.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -43,3 +43,8 @@ void GPIO_af_init(uint32_t gpio_periph, uint32_t alt_func_num, uint32_t pull_up_
     gpio_mode_set(gpio_periph, GPIO_MODE_AF, pull_up_down, pin);
     gpio_output_options_set(gpio_periph, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, pin);
 }
+
+void GPIO_analog_init(uint32_t gpio_periph, uint32_t pull_up_down, uint32_t pin){
+    GPIO_select(gpio_periph);
+    gpio_mode_set(gpio_periph,GPIO_MODE_ANALOG,pull_up_down,pin);
+}
