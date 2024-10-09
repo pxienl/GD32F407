@@ -489,6 +489,11 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -498,6 +503,11 @@
               <FileName>i2c_oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Hardware\i2c_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\spi_oled.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -551,6 +561,11 @@
               <FileName>ADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Library\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Library\SPI.c</FilePath>
             </File>
           </Files>
         </Group>
