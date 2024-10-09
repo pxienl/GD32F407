@@ -3,17 +3,14 @@
 #include "GPIO.h"
 
 void SPI_sw_struct_init(SPI_sw_struct* spi){
-  
-  GPIO_output_init(spi->CS_GPIO,GPIO_PUPD_PULLUP,GPIO_OTYPE_OD,spi->CS_PIN);
-  GPIO_output_init(spi->SCLK_GPIO,GPIO_PUPD_PULLUP,GPIO_OTYPE_OD,spi->SCLK_PIN);
-  GPIO_output_init(spi->MOSI_GPIO,GPIO_PUPD_PULLUP,GPIO_OTYPE_OD,spi->MOSI_PIN);
+  GPIO_output_init(spi->CS_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_PP,spi->CS_PIN);
+  GPIO_output_init(spi->SCLK_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_PP,spi->SCLK_PIN);
+  GPIO_output_init(spi->MOSI_GPIO,GPIO_PUPD_NONE,GPIO_OTYPE_PP,spi->MOSI_PIN);
   GPIO_input_init(spi->MISO_GPIO,GPIO_PUPD_PULLUP,spi->MISO_PIN);
 
   gpio_bit_set(spi->CS_GPIO,spi->CS_PIN);
   gpio_bit_set(spi->MOSI_GPIO,spi->MOSI_PIN);
   gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,spi->CPOL);
-
-  
 }
 
 void SPI_sw_start(SPI_sw_struct* spi){
@@ -30,33 +27,18 @@ uint8_t SPI_sw_transform(SPI_sw_struct* spi,uint8_t data){
   uint8_t recv = 0;
   for (uint8_t i = 0; i < 8; i++)
   {
-    gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,0);
-    gpio_bit_write(spi->MOSI_GPIO,spi->MOSI_PIN, data&0x80);
-    data <<= 1;
+    gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,spi->CPOL);
+    gpio_bit_write(spi->MOSI_GPIO,spi->MOSI_PIN, (data >> (7 - i)) & 0x01);
     delay_1us(spi->Freq);
 
-    gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,1);
+    gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,!spi->CPOL);
     recv <<= 1;
     recv |= !!gpio_input_bit_get(spi->MISO_GPIO,spi->MISO_PIN);
     delay_1us(spi->Freq);
   }
+  
+  gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,spi->CPOL);
   return recv;
-}
-
-uint8_t SPI_sw_read(SPI_sw_struct* spi){
-  uint8_t i,read=0;
-  for(i = 0; i < 8; i++)
-  {
-      gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,1);
-      delay_1us(spi->Freq);
-      read<<=1;
-      if(gpio_input_bit_get(spi->MISO_GPIO,spi->MISO_PIN))
-      {
-          read++;
-      }
-      gpio_bit_write(spi->SCLK_GPIO,spi->SCLK_PIN,0);
-  }
-  return read;
 }
 
 void SPI_hw_select(uint32_t spi_periph){  

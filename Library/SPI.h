@@ -25,7 +25,6 @@ void SPI_sw_struct_init(SPI_sw_struct* spi);
 void SPI_sw_start(SPI_sw_struct* spi);
 void SPI_sw_stop(SPI_sw_struct* spi);
 uint8_t SPI_sw_transform(SPI_sw_struct* spi,uint8_t data);
-uint8_t SPI_sw_read(SPI_sw_struct* spi);
 
 void SPI_hw_select(uint32_t spi_periph);
 void SPI_hw_init(uint32_t spi_periph);
