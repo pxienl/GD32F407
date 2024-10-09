@@ -7,44 +7,44 @@
 SPI_sw_struct spi;
 
 //反显函数
-void OLED_ColorTurn(uint8_t i)
+void SPI_OLED_ColorTurn(uint8_t i)
 {
-		OLED_WR_Byte(0xA6 | i,OLED_CMD);
+		SPI_OLED_WR_Byte(0xA6 | i,SPI_OLED_CMD);
 }
 
 //屏幕旋转180度
-void OLED_DisplayTurn(uint8_t i)
+void SPI_OLED_DisplayTurn(uint8_t i)
 {
 	if(i)
 	{
-		OLED_WR_Byte(0xC0,OLED_CMD);//反转显示
-		OLED_WR_Byte(0xA0,OLED_CMD);
+		SPI_OLED_WR_Byte(0xC0,SPI_OLED_CMD);//反转显示
+		SPI_OLED_WR_Byte(0xA0,SPI_OLED_CMD);
 	}else{
-		OLED_WR_Byte(0xC8,OLED_CMD);//正常显示
-		OLED_WR_Byte(0xA1,OLED_CMD);
+		SPI_OLED_WR_Byte(0xC8,SPI_OLED_CMD);//正常显示
+		SPI_OLED_WR_Byte(0xA1,SPI_OLED_CMD);
 	}
 }
 
 //开启OLED显示 
-void OLED_DisPlay_On(void)
+void SPI_OLED_DisPlay_On(void)
 {
-	OLED_WR_Byte(0x8D,OLED_CMD);//电荷泵使能
-	OLED_WR_Byte(0x14,OLED_CMD);//开启电荷泵
-	OLED_WR_Byte(0xAF,OLED_CMD);//点亮屏幕
+	SPI_OLED_WR_Byte(0x8D,SPI_OLED_CMD);//电荷泵使能
+	SPI_OLED_WR_Byte(0x14,SPI_OLED_CMD);//开启电荷泵
+	SPI_OLED_WR_Byte(0xAF,SPI_OLED_CMD);//点亮屏幕
 }
 
 //关闭OLED显示 
-void OLED_DisPlay_Off(void)
+void SPI_OLED_DisPlay_Off(void)
 {
-	OLED_WR_Byte(0x8D,OLED_CMD);//电荷泵使能
-	OLED_WR_Byte(0x10,OLED_CMD);//关闭电荷泵
-	OLED_WR_Byte(0xAE,OLED_CMD);//关闭屏幕
+	SPI_OLED_WR_Byte(0x8D,SPI_OLED_CMD);//电荷泵使能
+	SPI_OLED_WR_Byte(0x10,SPI_OLED_CMD);//关闭电荷泵
+	SPI_OLED_WR_Byte(0xAE,SPI_OLED_CMD);//关闭屏幕
 }
 
 
 //向SSD1306写入一个字节。
 //mode:数据/命令标志 0,表示命令;1,表示数据;
-void OLED_WR_Byte(uint8_t dat,uint8_t cmd)
+void SPI_OLED_WR_Byte(uint8_t dat,uint8_t cmd)
 {	
 	gpio_bit_write(GPIOA,GPIO_PIN_2,cmd);
 
@@ -61,54 +61,54 @@ void OLED_WR_Byte(uint8_t dat,uint8_t cmd)
 }
 
 //清屏函数
-void OLED_Clear(void)
+void SPI_OLED_Clear(void)
 {
 	uint8_t i,n;
 	for(i=0;i<8;i++)
 	{
-	 	 OLED_WR_Byte(0xb0+i,OLED_CMD);//设置页地址
-	   OLED_WR_Byte(0x10,OLED_CMD);  //设置列地址的高4位
-	   OLED_WR_Byte(0x00,OLED_CMD);  //设置列地址的低4位
+	 	 SPI_OLED_WR_Byte(0xb0+i,SPI_OLED_CMD);//设置页地址
+	   SPI_OLED_WR_Byte(0x10,SPI_OLED_CMD);  //设置列地址的高4位
+	   SPI_OLED_WR_Byte(0x00,SPI_OLED_CMD);  //设置列地址的低4位
 	   for(n=0;n<128;n++)
 		 {
-			 OLED_WR_Byte(0x00,OLED_DATA);//清除所有数据
+			 SPI_OLED_WR_Byte(0x00,SPI_OLED_DATA);//清除所有数据
 		 }
   }
 }
 
 //设置起始地址
-void OLED_address(uint8_t x,uint8_t y)
+void SPI_OLED_address(uint8_t x,uint8_t y)
 {
-	OLED_WR_Byte(0xb0+y,OLED_CMD);              //设置页地址
-	OLED_WR_Byte(((x&0xf0)>>4)|0x10,OLED_CMD);  //设置列地址的高4位
-	OLED_WR_Byte((x&0x0f),OLED_CMD);            //设置列地址的低4位
+	SPI_OLED_WR_Byte(0xb0+y,SPI_OLED_CMD);              //设置页地址
+	SPI_OLED_WR_Byte(((x&0xf0)>>4)|0x10,SPI_OLED_CMD);  //设置列地址的高4位
+	SPI_OLED_WR_Byte((x&0x0f),SPI_OLED_CMD);            //设置列地址的低4位
 }
 
 //显示128x64点阵图像
-void OLED_Display_128x64(uint8_t *dp)
+void SPI_OLED_Display_128x64(uint8_t *dp)
 {
 	uint8_t i,j;
 	for(i=0;i<8;i++)
 	{
-		OLED_address(0,i);
+		SPI_OLED_address(0,i);
 		for(j=0;j<128;j++)
 		{
-			OLED_WR_Byte(*dp,OLED_DATA); //写数据到OLED,每写完一个8位的数据后列地址自动加1
+			SPI_OLED_WR_Byte(*dp,SPI_OLED_DATA); //写数据到OLED,每写完一个8位的数据后列地址自动加1
 			dp++;
     }
   }
 }
 
 //显示16x16点阵图像、汉字、生僻字或16x16点阵的其他图标
-void OLED_Display_16x16(uint8_t x,uint8_t y,uint8_t *dp)
+void SPI_OLED_Display_16x16(uint8_t x,uint8_t y,uint8_t *dp)
 {
 	uint8_t i,j;
 	for(j=0;j<2;j++)
 	{
-		OLED_address(x,y);
+		SPI_OLED_address(x,y);
 		for(i=0;i<16;i++)
 		{
-			OLED_WR_Byte(*dp,OLED_DATA);  //写数据到OLED,每写完一个8位的数据后列地址自动加1
+			SPI_OLED_WR_Byte(*dp,SPI_OLED_DATA);  //写数据到OLED,每写完一个8位的数据后列地址自动加1
 			dp++;
     }
 		y++;
@@ -116,15 +116,15 @@ void OLED_Display_16x16(uint8_t x,uint8_t y,uint8_t *dp)
 }
 
 //显示8x16点阵图像、ASCII, 或8x16点阵的自造字符、其他图标
-void OLED_Display_8x16(uint8_t x,uint8_t y,uint8_t *dp)
+void SPI_OLED_Display_8x16(uint8_t x,uint8_t y,uint8_t *dp)
 {
 	uint8_t i,j;
 	for(j=0;j<2;j++)
 	{
-		OLED_address(x,y);
+		SPI_OLED_address(x,y);
 		for(i=0;i<8;i++)
 		{
-			OLED_WR_Byte(*dp,OLED_DATA);   //写数据到LCD,每写完一个8位的数据后列地址自动加1
+			SPI_OLED_WR_Byte(*dp,SPI_OLED_DATA);   //写数据到LCD,每写完一个8位的数据后列地址自动加1
 			dp++;
     }
 		y++;
@@ -132,13 +132,13 @@ void OLED_Display_8x16(uint8_t x,uint8_t y,uint8_t *dp)
 }
 
 //显示5*7点阵图像、ASCII, 或5x7点阵的自造字符、其他图标
-void OLED_Display_5x7(uint8_t x,uint8_t y,uint8_t *dp)
+void SPI_OLED_Display_5x7(uint8_t x,uint8_t y,uint8_t *dp)
 {
 	uint8_t i;
-  OLED_address(x,y);
+  SPI_OLED_address(x,y);
 	for(i=0;i<6;i++)
 	{
-		OLED_WR_Byte(*dp,OLED_DATA);
+		SPI_OLED_WR_Byte(*dp,SPI_OLED_DATA);
 		dp++;
   }
 }
@@ -160,10 +160,10 @@ uint8_t Get_data_from_ROM(void)
 
 //从相关地址（addrHigh：地址高字节,addrMid：地址中字节,addrLow：地址低字节）中连续读出DataLen个字节的数据到 pbuff的地址
 //连续读取
-void OLED_get_data_from_ROM(uint8_t addrHigh,uint8_t addrMid,uint8_t addrLow,uint8_t *pbuff,uint8_t DataLen)
+void SPI_OLED_get_data_from_ROM(uint8_t addrHigh,uint8_t addrMid,uint8_t addrLow,uint8_t *pbuff,uint8_t DataLen)
 {
 	uint8_t i;
-	OLED_ROM_CS_Clr();
+	SPI_OLED_ROM_CS_Clr();
 	Send_Command_to_ROM(0x03);
 	Send_Command_to_ROM(addrHigh);
 	Send_Command_to_ROM(addrMid);
@@ -172,12 +172,12 @@ void OLED_get_data_from_ROM(uint8_t addrHigh,uint8_t addrMid,uint8_t addrLow,uin
 	{
 		*(pbuff+i)=Get_data_from_ROM();
   }
-	OLED_ROM_CS_Set();
+	SPI_OLED_ROM_CS_Set();
 }
 
 
 uint32_t fontaddr=0;
-void OLED_Display_GB2312_string(uint8_t x,uint8_t y,char *text)
+void SPI_OLED_Display_GB2312_string(uint8_t x,uint8_t y,char *text)
 {
 	uint8_t i=0;
 	uint8_t addrHigh,addrMid,addrLow;
@@ -197,9 +197,9 @@ void OLED_Display_GB2312_string(uint8_t x,uint8_t y,char *text)
 			addrMid=(fontaddr&0xff00)>>8;       //地址的中8位,共24位
 			addrLow=(fontaddr&0xff);            //地址的低8位,共24位
 			
-			OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,32);
+			SPI_OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,32);
 			//取32个字节的数据，存到"fontbuf[32]"
-			OLED_Display_16x16(x,y,fontbuf);
+			SPI_OLED_Display_16x16(x,y,fontbuf);
 			//显示汉字到LCD上，y为页地址，x为列地址，fontbuf[]为数据
 			x+=16;
 			i+=2;
@@ -215,8 +215,8 @@ void OLED_Display_GB2312_string(uint8_t x,uint8_t y,char *text)
 			addrMid=(fontaddr&0xff00)>>8;
 			addrLow=(fontaddr&0xff);
 			
-			OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,32);
-			OLED_Display_16x16(x,y,fontbuf);
+			SPI_OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,32);
+			SPI_OLED_Display_16x16(x,y,fontbuf);
 			x+=16;
 			i+=2;
     }
@@ -231,8 +231,8 @@ void OLED_Display_GB2312_string(uint8_t x,uint8_t y,char *text)
 			addrMid=(fontaddr&0xff00)>>8;
 			addrLow=fontaddr&0xff;
 			
-			OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,16);
-			OLED_Display_8x16(x,y,fontbuf);
+			SPI_OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,16);
+			SPI_OLED_Display_8x16(x,y,fontbuf);
 			x+=8;
 			i+=1;
     }
@@ -241,7 +241,7 @@ void OLED_Display_GB2312_string(uint8_t x,uint8_t y,char *text)
   }
 }
 
-void OLED_Display_string_5x7(uint8_t x,uint8_t y,char *text)
+void SPI_OLED_Display_string_5x7(uint8_t x,uint8_t y,char *text)
 {
 	uint8_t i=0;
 	uint8_t addrHigh,addrMid,addrLow;
@@ -259,8 +259,8 @@ void OLED_Display_string_5x7(uint8_t x,uint8_t y,char *text)
 			addrMid=(fontaddr&0xff00)>>8;
 			addrLow=fontaddr&0xff;
 			
-			OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,8);
-			OLED_Display_5x7(x,y,fontbuf);
+			SPI_OLED_get_data_from_ROM(addrHigh,addrMid,addrLow,fontbuf,8);
+			SPI_OLED_Display_5x7(x,y,fontbuf);
 
 			for (uint8_t i = 0; i < 8; i++)
 			{
@@ -280,13 +280,13 @@ void OLED_Display_string_5x7(uint8_t x,uint8_t y,char *text)
 //x,y :起点坐标
 //num1：要显示的小数
 //len :数字的位数
-void OLED_ShowNum(uint8_t x,uint8_t y,float num1,uint8_t len)
+void SPI_OLED_ShowNum(uint8_t x,uint8_t y,float num1,uint8_t len)
 {
 	uint8_t i;
 	uint32_t t,num;
 	x=x+len*8+8;//要显示的小数最低位的横坐标
 	num=num1*100;//将小数左移两位并转化为整数
-	OLED_Display_GB2312_string(x-24,y,".");//显示小数点
+	SPI_OLED_Display_GB2312_string(x-24,y,".");//显示小数点
 	for(i=0;i<len;i++)
 	{
 		t=num%10;//取个位数的数值
@@ -295,22 +295,22 @@ void OLED_ShowNum(uint8_t x,uint8_t y,float num1,uint8_t len)
 		if(i==2){x-=8;}//当显示出来两个小数之后，空出小数点的位置
 		switch(t)
 		{
-			case 0 :OLED_Display_GB2312_string(x,y,"0");break;
-			case 1 :OLED_Display_GB2312_string(x,y,"1");break;
-			case 2 :OLED_Display_GB2312_string(x,y,"2");break;
-			case 3 :OLED_Display_GB2312_string(x,y,"3");break;
-			case 4 :OLED_Display_GB2312_string(x,y,"4");break;
-			case 5 :OLED_Display_GB2312_string(x,y,"5");break;
-			case 6 :OLED_Display_GB2312_string(x,y,"6");break;
-			case 7 :OLED_Display_GB2312_string(x,y,"7");break;
-			case 8 :OLED_Display_GB2312_string(x,y,"8");break;
-			case 9 :OLED_Display_GB2312_string(x,y,"9");break;
+			case 0 :SPI_OLED_Display_GB2312_string(x,y,"0");break;
+			case 1 :SPI_OLED_Display_GB2312_string(x,y,"1");break;
+			case 2 :SPI_OLED_Display_GB2312_string(x,y,"2");break;
+			case 3 :SPI_OLED_Display_GB2312_string(x,y,"3");break;
+			case 4 :SPI_OLED_Display_GB2312_string(x,y,"4");break;
+			case 5 :SPI_OLED_Display_GB2312_string(x,y,"5");break;
+			case 6 :SPI_OLED_Display_GB2312_string(x,y,"6");break;
+			case 7 :SPI_OLED_Display_GB2312_string(x,y,"7");break;
+			case 8 :SPI_OLED_Display_GB2312_string(x,y,"8");break;
+			case 9 :SPI_OLED_Display_GB2312_string(x,y,"9");break;
 		}
 	}
 }
 
 //OLED的初始化
-void OLED_Init(void)
+void SPI_OLED_Init(void)
 {
 	
 	spi.SCLK_GPIO = GPIOA;
@@ -343,35 +343,35 @@ void OLED_Init(void)
 	
 	delay_1ms(200);
 	
-	OLED_WR_Byte(0xAE,OLED_CMD);//--turn off oled panel
-	OLED_WR_Byte(0x00,OLED_CMD);//---set low column address
-	OLED_WR_Byte(0x10,OLED_CMD);//---set high column address
-	OLED_WR_Byte(0x40,OLED_CMD);//--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
-	OLED_WR_Byte(0x81,OLED_CMD);//--set contrast control register
-	OLED_WR_Byte(0xCF,OLED_CMD); // Set SEG Output Current Brightness
-	OLED_WR_Byte(0xA1,OLED_CMD);//--Set SEG/Column Mapping     0xa0左右反置 0xa1正常
-	OLED_WR_Byte(0xC8,OLED_CMD);//Set COM/Row Scan Direction   0xc0上下反置 0xc8正常
-	OLED_WR_Byte(0xA6,OLED_CMD);//--set normal display
-	OLED_WR_Byte(0xA8,OLED_CMD);//--set multiplex ratio(1 to 64)
-	OLED_WR_Byte(0x3f,OLED_CMD);//--1/64 duty
-	OLED_WR_Byte(0xD3,OLED_CMD);//-set display offset	Shift Mapping RAM Counter (0x00~0x3F)
-	OLED_WR_Byte(0x00,OLED_CMD);//-not offset
-	OLED_WR_Byte(0xd5,OLED_CMD);//--set display clock divide ratio/oscillator frequency
-	OLED_WR_Byte(0x80,OLED_CMD);//--set divide ratio, Set Clock as 100 Frames/Sec
-	OLED_WR_Byte(0xD9,OLED_CMD);//--set pre-charge period
-	OLED_WR_Byte(0xF1,OLED_CMD);//Set Pre-Charge as 15 Clocks & Discharge as 1 Clock
-	OLED_WR_Byte(0xDA,OLED_CMD);//--set com pins hardware configuration
-	OLED_WR_Byte(0x12,OLED_CMD);
-	OLED_WR_Byte(0xDB,OLED_CMD);//--set vcomh
-	OLED_WR_Byte(0x40,OLED_CMD);//Set VCOM Deselect Level
-	OLED_WR_Byte(0x20,OLED_CMD);//-Set Page Addressing Mode (0x00/0x01/0x02)
-	OLED_WR_Byte(0x02,OLED_CMD);//
-	OLED_WR_Byte(0x8D,OLED_CMD);//--set Charge Pump enable/disable
-	OLED_WR_Byte(0x14,OLED_CMD);//--set(0x10) disable
-	OLED_WR_Byte(0xA4,OLED_CMD);// Disable Entire Display On (0xa4/0xa5)
-	OLED_WR_Byte(0xA6,OLED_CMD);// Disable Inverse Display On (0xa6/a7) 
-	OLED_Clear();
-	OLED_WR_Byte(0xAF,OLED_CMD); /*display ON*/ 
+	SPI_OLED_WR_Byte(0xAE,SPI_OLED_CMD);//--turn off oled panel
+	SPI_OLED_WR_Byte(0x00,SPI_OLED_CMD);//---set low column address
+	SPI_OLED_WR_Byte(0x10,SPI_OLED_CMD);//---set high column address
+	SPI_OLED_WR_Byte(0x40,SPI_OLED_CMD);//--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
+	SPI_OLED_WR_Byte(0x81,SPI_OLED_CMD);//--set contrast control register
+	SPI_OLED_WR_Byte(0xCF,SPI_OLED_CMD); // Set SEG Output Current Brightness
+	SPI_OLED_WR_Byte(0xA1,SPI_OLED_CMD);//--Set SEG/Column Mapping     0xa0左右反置 0xa1正常
+	SPI_OLED_WR_Byte(0xC8,SPI_OLED_CMD);//Set COM/Row Scan Direction   0xc0上下反置 0xc8正常
+	SPI_OLED_WR_Byte(0xA6,SPI_OLED_CMD);//--set normal display
+	SPI_OLED_WR_Byte(0xA8,SPI_OLED_CMD);//--set multiplex ratio(1 to 64)
+	SPI_OLED_WR_Byte(0x3f,SPI_OLED_CMD);//--1/64 duty
+	SPI_OLED_WR_Byte(0xD3,SPI_OLED_CMD);//-set display offset	Shift Mapping RAM Counter (0x00~0x3F)
+	SPI_OLED_WR_Byte(0x00,SPI_OLED_CMD);//-not offset
+	SPI_OLED_WR_Byte(0xd5,SPI_OLED_CMD);//--set display clock divide ratio/oscillator frequency
+	SPI_OLED_WR_Byte(0x80,SPI_OLED_CMD);//--set divide ratio, Set Clock as 100 Frames/Sec
+	SPI_OLED_WR_Byte(0xD9,SPI_OLED_CMD);//--set pre-charge period
+	SPI_OLED_WR_Byte(0xF1,SPI_OLED_CMD);//Set Pre-Charge as 15 Clocks & Discharge as 1 Clock
+	SPI_OLED_WR_Byte(0xDA,SPI_OLED_CMD);//--set com pins hardware configuration
+	SPI_OLED_WR_Byte(0x12,SPI_OLED_CMD);
+	SPI_OLED_WR_Byte(0xDB,SPI_OLED_CMD);//--set vcomh
+	SPI_OLED_WR_Byte(0x40,SPI_OLED_CMD);//Set VCOM Deselect Level
+	SPI_OLED_WR_Byte(0x20,SPI_OLED_CMD);//-Set Page Addressing Mode (0x00/0x01/0x02)
+	SPI_OLED_WR_Byte(0x02,SPI_OLED_CMD);//
+	SPI_OLED_WR_Byte(0x8D,SPI_OLED_CMD);//--set Charge Pump enable/disable
+	SPI_OLED_WR_Byte(0x14,SPI_OLED_CMD);//--set(0x10) disable
+	SPI_OLED_WR_Byte(0xA4,SPI_OLED_CMD);// Disable Entire Display On (0xa4/0xa5)
+	SPI_OLED_WR_Byte(0xA6,SPI_OLED_CMD);// Disable Inverse Display On (0xa6/a7) 
+	SPI_OLED_Clear();
+	SPI_OLED_WR_Byte(0xAF,SPI_OLED_CMD); /*display ON*/ 
 }
 
 
