@@ -69,7 +69,7 @@ static void usart_config(uint32_t usart_periph,uint32_t baudval,uint8_t nvic_irq
 */
 void usart_init(uint32_t usart_periph,uint32_t gpio_periph, uint32_t alt_func_num, uint32_t pin){
     GPIO_af_init(gpio_periph,alt_func_num,GPIO_PUPD_NONE,pin);
-    usart_config(usart_periph, 115200, 0, 1);
+    usart_config(usart_periph, 115200, 2, 2);
 }
 
 /*

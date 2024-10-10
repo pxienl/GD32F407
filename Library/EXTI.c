@@ -46,7 +46,7 @@ static void EXTI_select(uint32_t GPIOx, exti_line_enum EXTI_x,uint32_t* Pin,
   else if (EXTI_x == EXTI_15) *EXTI_SOURCE_PINx = EXTI_SOURCE_PIN15, *Pin = GPIO_PIN_15, *EXTIx_IRQn = EXTI10_15_IRQn;
 }
 
-void EXTI_init(uint32_t GPIOx, exti_line_enum EXTI_x,
+void EXTI_init(uint32_t GPIOx, uint32_t pull_up_down, exti_line_enum EXTI_x,
                uint8_t PrePriority, uint8_t SubPriority,
                exti_trig_type_enum EXTI_TRIG) {
   uint32_t Pin;
@@ -54,7 +54,7 @@ void EXTI_init(uint32_t GPIOx, exti_line_enum EXTI_x,
   IRQn_Type EXTIx_IRQn;
 
   EXTI_select(GPIOx, EXTI_x,&Pin,&EXTI_SOURCE_GPIOx,&EXTI_SOURCE_PINx,&EXTIx_IRQn);
-  GPIO_input_init(GPIOx,GPIO_PUPD_NONE,Pin);
+  GPIO_input_init(GPIOx,pull_up_down,Pin);
   EXTI_config(EXTI_x,EXTI_TRIG,EXTI_SOURCE_GPIOx,EXTI_SOURCE_PINx,EXTIx_IRQn,PrePriority,SubPriority);
 }
 void EXTI_soft_init(exti_line_enum EXTI_x,

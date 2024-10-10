@@ -3,7 +3,7 @@
 
 #include "gd32f4xx.h"
 
-// #define EXTI_0_RUN
+#define EXTI_0_RUN
 // #define EXTI_1_RUN
 // #define EXTI_2_RUN
 // #define EXTI_3_RUN
@@ -20,7 +20,7 @@
 // #define EXTI_14_RUN
 // #define EXTI_15_RUN
 
-void EXTI_init(uint32_t GPIOx, exti_line_enum EXTI_x, uint8_t PrePriority, uint8_t SubPriority, exti_trig_type_enum EXTI_TRIG);
+void EXTI_init(uint32_t GPIOx, uint32_t pull_up_down, exti_line_enum EXTI_x, uint8_t PrePriority, uint8_t SubPriority, exti_trig_type_enum EXTI_TRIG);
 void EXTI_soft_init(exti_line_enum EXTI_x, uint8_t PrePriority, uint8_t SubPriority, exti_trig_type_enum EXTI_TRIG);
 
 #ifdef EXTI_0_RUN
