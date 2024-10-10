@@ -4,10 +4,86 @@
 #include "USART.h"
 #include "ADC.h"
 #include "GPIO.h"
-#include "spi_oled.h"
+#include "SPI.h"
+#include "u8g2/u8g2.h"
+
+uint8_t u8x8_byte_arduino_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
+  uint8_t *data;
+  uint8_t internal_spi_mode; 
+  switch(msg) {
+    case U8X8_MSG_BYTE_SEND:
+			data = (uint8_t *)arg_ptr;
+			while(arg_int > 0){
+				SPI_hw_transform(SPI0,(uint8_t)*data);
+				data++;
+        arg_int--;
+			}
+      break;
+    case U8X8_MSG_BYTE_INIT:
+			GPIO_output_init(GPIOA,GPIO_PUPD_NONE,GPIO_OTYPE_PP,GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_5|GPIO_PIN_7);
+			GPIO_af_init(GPIOA,GPIO_AF_5,GPIO_PUPD_NONE,GPIO_PIN_5|GPIO_PIN_7);
+			gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5|GPIO_PIN_7);
+      SPI_hw_init(SPI0);
+
+      gpio_bit_set(GPIOA,GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_5|GPIO_PIN_7);
+			
+			// gpio_bit_write(GPIOA,GPIO_PIN_2,u8x8->display_info->chip_disable_level);
+
+      // delay_1ms(1000);
+      break;
+    case U8X8_MSG_BYTE_SET_DC:
+      gpio_bit_write(GPIOA,GPIO_PIN_2,!!arg_int);
+      break;
+    case U8X8_MSG_BYTE_START_TRANSFER:
+      gpio_bit_write(GPIOA,GPIO_PIN_3, 0);
+      break;
+    case U8X8_MSG_BYTE_END_TRANSFER:      
+      gpio_bit_write(GPIOA,GPIO_PIN_3, 1);
+      break;
+    default:
+      return 0;
+  }  
+  return 1;
+}
+
+
+
+uint8_t u8x8_gpio_and_delay_template(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
+{
+  switch(msg)
+  {
+    case U8X8_MSG_GPIO_AND_DELAY_INIT:	// called once during init phase of u8g2/u8x8
+			GPIO_output_init(GPIOA,GPIO_PUPD_NONE,GPIO_OTYPE_PP,GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_3|GPIO_PIN_2);
+			delay_1ms(200);
+      break;							// can be used to setup pins
+    case U8X8_MSG_DELAY_10MICRO:		// delay arg_int * 10 micro seconds
+			delay_1us(10);
+      break;
+    case U8X8_MSG_DELAY_MILLI:			// delay arg_int * 1 milli second
+		  delay_1ms(1);
+      break;
+    case U8X8_MSG_GPIO_SPI_CLOCK:
+		// 	gpio_bit_write(GPIOA,GPIO_PIN_5,arg_int);
+      break;
+    case U8X8_MSG_GPIO_SPI_DATA:
+		// 	gpio_bit_write(GPIOA,GPIO_PIN_7,arg_int);
+      break;
+    case U8X8_MSG_GPIO_CS:				// CS (chip select) pin: Output level in arg_int
+			gpio_bit_write(GPIOA,GPIO_PIN_3,arg_int);
+      break;
+		case U8X8_MSG_GPIO_DC:
+		  gpio_bit_write(GPIOA,GPIO_PIN_2,arg_int);
+    default:
+      // u8x8_SetGPIOResult(u8x8, 1);			// default return value
+      break;
+  }
+  return 1;
+}
 
 int main(void)
 {
+		u8g2_t u8g2;
+
     float o,vntc;
     uint16_t i,adc;
     int c;
@@ -17,23 +93,21 @@ int main(void)
     usart_dma_tx_init(USART0,DMA1,DMA_CH7);
     // usart_dma_rx_init(USART0,DMA1,DMA_CH5);
 
-  	uint8_t t=0;
-		delay_1ms(168);
- 		SPI_OLED_Init();				//初始化OLED
-		t=' ';
-		SPI_OLED_ColorTurn(0);//0正常显示，1 反色显示
-  	SPI_OLED_DisplayTurn(0);//0正常显示 1 屏幕翻转显示
-		
-		uint8_t a[] = {0x80,0x80,0x80,0x80,0x01}; /*"_",0*/
-		SPI_OLED_Display_5x7(0,7,a);/*显示一串5x7点阵的ASCII字*/
-		SPI_OLED_Display_5x7(5,7,a);/*显示一串5x7点阵的ASCII字*/
-		SPI_OLED_Display_5x7(10,7,a);/*显示一串5x7点阵的ASCII字*/
-		SPI_OLED_Display_string_5x7(16,7,"ABCDEFG");/*显示一串5x7点阵的ASCII字*/
+	
 
-		SPI_OLED_Display_GB2312_string(0,0,"12864,如果需要输入中文需要将该文件编码保存为 GBK");	/*在第1页，第1列，显示一串16x16点阵汉字或8x16的ASCII字*/
+		u8g2_Setup_ssd1306_128x64_noname_f(&u8g2,U8G2_R0,u8x8_byte_arduino_hw_spi,u8x8_gpio_and_delay_template);
+		u8g2_InitDisplay(&u8g2);
+		u8g2_SetPowerSave(&u8g2, 0);
+		// delay_1ms(1000);
+    u8g2_DrawCircle(&u8g2,80, 20, 10, U8G2_DRAW_ALL);
+		// u8g2_DrawLine(&u8g2, 0,0, 127, 63);
+		
+		// u8g2_DrawLine(&u8g2, 127,0 , 0,63);
+		u8g2_SendBuffer(&u8g2);
+
+
 		while(1) 
 		{
-			delay_1ms(1000);
-			// SPI_OLED_Clear();
-	}
+
+		}
 }
