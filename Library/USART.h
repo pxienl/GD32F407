@@ -4,11 +4,11 @@
 #include "gd32f4xx.h"
 
 #define USART_PRINT 0
-// #define USART_PRINT_DMA 0
+#define USART_PRINT_DMA 0
 
-// #define USART_DMA
+#define USART_DMA
 
-// #define USART_DMA_RX 0
+#define USART_DMA_RX 0
 
 #define USART_RX0
 // #define USART_RX1
