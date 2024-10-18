@@ -55,6 +55,20 @@ void systick_config(void)
     NVIC_SetPriority(SysTick_IRQn, 0x00U);
 }
 
+#ifndef SYS_SUPPORT_OS
+/*!
+    \brief    delay decrement
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void delay_decrement(void)
+{
+    if(0U != delay) {
+        delay--;
+    }
+}
+
 /*!
     \brief    delay a time in milliseconds
     \param[in]  count: count in milliseconds
@@ -69,19 +83,6 @@ void delay_1ms(uint32_t count)
     }
 }
 
-/*!
-    \brief    delay decrement
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
-void delay_decrement(void)
-{
-    if(0U != delay) {
-        delay--;
-    }
-}
-
 void delay_1us(uint32_t count)
 {
     delay = count;
@@ -89,3 +90,38 @@ void delay_1us(uint32_t count)
     while(0U != delay) {
     }
 }
+#else
+
+void delay_1ms(uint32_t count){
+    uint32_t ticks;
+    uint32_t told, tnow, reload, tcnt = 0;
+    reload = SysTick->LOAD;
+    ticks = count * (SystemCoreClock / 1000000);
+    told = SysTick->VAL;
+
+    while (1)
+    {
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told) tcnt += told- tnow;
+            else tcnt += reload-tnow+told;
+            told = tnow;
+
+            if (tcnt >= ticks) break;
+            
+        }
+        
+    }
+    
+}
+void delay_1us(uint32_t count){
+    uint32_t i;
+    for (i = 0; i < count; i++)
+    {
+        delay_1us(1000);
+    }
+    
+}
+
+#endif
