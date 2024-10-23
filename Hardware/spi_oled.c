@@ -49,13 +49,14 @@ void SPI_OLED_WR_Byte(uint8_t dat,uint8_t cmd)
 	gpio_bit_write(GPIOA,GPIO_PIN_2,cmd);
 
 	
-	SPI_sw_start(&spi);
-	SPI_sw_transform(&spi,dat); 
-	SPI_sw_stop(&spi);
+	// SPI_sw_start(&spi);
+	// SPI_sw_transform(&spi,dat); 
+	// SPI_sw_stop(&spi);
 
-	// gpio_bit_reset(GPIOA,GPIO_PIN_3);
+	gpio_bit_reset(GPIOA,GPIO_PIN_3);
 	// SPI_hw_transform(SPI0,dat);
-	// gpio_bit_set(GPIOA,GPIO_PIN_3);
+	SPI_OLED_SEND(&dat);
+	gpio_bit_set(GPIOA,GPIO_PIN_3);
 
 	gpio_bit_set(GPIOA,GPIO_PIN_2);
 }
@@ -146,14 +147,16 @@ void SPI_OLED_Display_5x7(uint8_t x,uint8_t y,uint8_t *dp)
 //送指令到晶联讯字库IC
 void Send_Command_to_ROM(uint8_t dat)
 {
-	SPI_sw_transform(&spi,dat);
+	// SPI_sw_transform(&spi,dat);
+	SPI_OLED_SEND(&dat);
 	// SPI_hw_transform(SPI0,dat);
 }
 
 //从晶联讯字库IC中取汉字或字符数据（1个字节）
 uint8_t Get_data_from_ROM(void)
 {
-	return SPI_sw_transform(&spi,0x00);
+	// return SPI_sw_transform(&spi,0x00);
+	return SPI_OLED_RECV();
 	// return SPI_hw_transform(SPI0,0x00);
 }
 
@@ -313,35 +316,36 @@ void SPI_OLED_ShowNum(uint8_t x,uint8_t y,float num1,uint8_t len)
 void SPI_OLED_Init(void)
 {
 	
-	spi.SCLK_GPIO = GPIOA;
-	spi.SCLK_PIN 	= GPIO_PIN_5;
-	spi.MOSI_GPIO = GPIOA;
-	spi.MOSI_PIN 	= GPIO_PIN_7;
-	spi.MISO_GPIO = GPIOA;
-	spi.MISO_PIN 	= GPIO_PIN_6;
-	spi.CS_GPIO 	= GPIOA;
-	spi.CS_PIN 		= GPIO_PIN_3;
+	// spi.SCLK_GPIO = GPIOA;
+	// spi.SCLK_PIN 	= GPIO_PIN_5;
+	// spi.MOSI_GPIO = GPIOA;
+	// spi.MOSI_PIN 	= GPIO_PIN_7;
+	// spi.MISO_GPIO = GPIOA;
+	// spi.MISO_PIN 	= GPIO_PIN_6;
+	// spi.CS_GPIO 	= GPIOA;
+	// spi.CS_PIN 		= GPIO_PIN_3;
 
-	spi.CPOL 			= 0;
-	spi.CPHA 			= 0;
-	spi.BitFirst 	= 1;
-	spi.Freq 			= 20;
+	// spi.CPOL 			= 0;
+	// spi.CPHA 			= 0;
+	// spi.BitFirst 	= 1;
+	// spi.Freq 			= 20;
 	
-	SPI_sw_struct_init(&spi);
+	// SPI_sw_struct_init(&spi);
 
 	GPIO_output_init(GPIOA,GPIO_PUPD_PULLUP,GPIO_OTYPE_OD,GPIO_PIN_3);
-	// GPIO_af_init(GPIOA,GPIO_AF_5,GPIO_PUPD_NONE,GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
-	// gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
+	GPIO_af_init(GPIOA,GPIO_AF_5,GPIO_PUPD_NONE,GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
+	gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
 
-	// SPI_hw_init(SPI0);
+	SPI_hw_init(SPI0);
 
 	GPIO_output_init(GPIOA,GPIO_PUPD_NONE,GPIO_OTYPE_PP,GPIO_PIN_2); // DC
 	GPIO_output_init(GPIOC,GPIO_PUPD_PULLUP,GPIO_OTYPE_OD,GPIO_PIN_5); // CS2
-	
 	gpio_bit_set(GPIOC,GPIO_PIN_5);
-	gpio_bit_set(GPIOA,GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
+	gpio_bit_set(GPIOA,GPIO_PIN_2);
+
+	// gpio_bit_set(GPIOA,GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
 	
-	delay_1ms(200);
+	// delay_1ms(200);
 	
 	SPI_OLED_WR_Byte(0xAE,SPI_OLED_CMD);//--turn off oled panel
 	SPI_OLED_WR_Byte(0x00,SPI_OLED_CMD);//---set low column address

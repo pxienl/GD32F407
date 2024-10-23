@@ -30,4 +30,9 @@ void SPI_hw_select(uint32_t spi_periph);
 void SPI_hw_init(uint32_t spi_periph);
 uint8_t SPI_hw_transform(uint32_t spi_periph, uint8_t data);
 
+void SPI_dma_transmit_init(uint32_t spi_periph, uint32_t dma_periph, dma_channel_enum channelx);
+void SPI_dma_receive_init(uint32_t spi_periph, uint32_t dma_periph, dma_channel_enum channelx);
+void SPI_dma_send(uint32_t spi_periph,uint32_t dma_periph, dma_channel_enum channelx,uint8_t * data,uint32_t len);
+// uint8_t SPI_dma_recv(uint32_t spi_periph,uint32_t dma_periph, dma_channel_enum channelx);
+uint8_t SPI_dma_transform(uint32_t spi_periph,uint32_t dma_periph, dma_channel_enum txchannelx,dma_channel_enum rxchannelx,uint8_t data);
 #endif

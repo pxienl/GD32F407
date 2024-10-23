@@ -4,6 +4,9 @@
 #include "gd32f4xx.h"
 #include "SPI.h"
 
+#define SPI_OLED_SEND(dat)  SPI_dma_send(SPI0,DMA1,DMA_CH3,dat,1)
+#define SPI_OLED_RECV()  SPI_dma_transform(SPI0,DMA1,DMA_CH3,DMA_CH2,0)
+
 //SCL=SCLK 
 //SDA=MOSI
 //DC=DC
@@ -11,12 +14,6 @@
 //FS0=MOSI
 //CS2=CS2
 //-----------------OLED端口定义---------------- 
-
-#define SPI_OLED_SCL_Clr() gpio_bit_reset(GPIOA,GPIO_PIN_5)//SCL
-#define SPI_OLED_SCL_Set() gpio_bit_set(GPIOA,GPIO_PIN_5)
-
-#define SPI_OLED_SDA_Clr() gpio_bit_reset(GPIOA,GPIO_PIN_7)//SDA
-#define SPI_OLED_SDA_Set() gpio_bit_set(GPIOA,GPIO_PIN_7)
 
 #define SPI_OLED_DC_Clr()  gpio_bit_reset(GPIOA,GPIO_PIN_2)//DC
 #define SPI_OLED_DC_Set()  gpio_bit_set(GPIOA,GPIO_PIN_2)
