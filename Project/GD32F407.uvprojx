@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,GD32F407</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Firmware\CMSIS\GD\GD32F4xx\Include;..\User;..\Firmware\CMSIS;..\Firmware\GD32F4xx_standard_peripheral\Include;..\Library;..\Hardware;..\Third_Party;..\Hardware\VL53L0X\core\inc;..\Hardware\VL53L0X\platform\inc;..\Hardware\VL53L0X</IncludePath>
+              <IncludePath>..\Firmware\CMSIS\GD\GD32F4xx\Include;..\User;..\Firmware\CMSIS;..\Firmware\GD32F4xx_standard_peripheral\Include;..\Library;..\Hardware;..\Third_Party;..\Hardware\VL53L0X\core\inc;..\Hardware\VL53L0X\platform\inc;..\Hardware\VL53L0X;..\Third_Party\fat_fs\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -494,6 +494,11 @@
               <FileType>1</FileType>
               <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</FilePath>
             </File>
+            <File>
+              <FileName>gd32f4xx_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Firmware\GD32F4xx_standard_peripheral\Source\gd32f4xx_sdio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -518,6 +523,11 @@
               <FileName>vl53l0x.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Hardware\vl53l0x.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdcard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\sdcard.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -856,6 +866,41 @@
               <FileName>u8x8_u16toa.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Third_Party\u8g2\u8x8_u16toa.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Third_Party/fatfs</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third_Party\fat_fs\src\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>fattime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third_Party\fat_fs\src\fattime.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third_Party\fat_fs\src\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff_gen_drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third_Party\fat_fs\src\ff_gen_drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third_Party\fat_fs\src\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third_Party\fat_fs\src\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>
