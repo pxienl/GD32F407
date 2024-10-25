@@ -53,6 +53,8 @@ static void ST7789_WriteData(uint8_t *buff, size_t buff_size)
 				buff_size--;
     }
 
+	SPI_dma_send(SPI0,DMA1,DMA_CH3,buff,buff_size);
+
 	ST7789_UnSelect();
 }
 /**
@@ -284,8 +286,7 @@ void ST7789_Fill(uint16_t xSta, uint16_t ySta, uint16_t xEnd, uint16_t yEnd, uin
 	ST7789_SetAddressWindow(xSta, ySta, xEnd, yEnd);
 	
 	
-	uint32_t size = 0;
-	size = ((xEnd - xSta) + 1) * ((yEnd - ySta) + 1)*2;
+	uint32_t size = ((xEnd - xSta) + 1) * ((yEnd - ySta) + 1)*2;
 	
 	
 	ST7789_WriteData((uint8_t *)color, size);
