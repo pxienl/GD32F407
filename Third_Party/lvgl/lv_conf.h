@@ -19,6 +19,10 @@
 
 #include <stdint.h>
 
+
+#define MY_DISP_HOR_RES 240     // 水平分辨率
+#define MY_DISP_VER_RES 280     // 垂直分辨率
+
 /*====================
    COLOR SETTINGS
  *====================*/
