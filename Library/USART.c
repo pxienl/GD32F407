@@ -113,37 +113,37 @@ void send_array(uint32_t usart_periph,uint8_t *data,uint32_t length){
 }
 
 #ifdef USART_DMA
-uint32_t USART0_dma_periph = NULL;
-uint32_t USART0_tx_dma_channel = NULL;
-uint32_t USART0_rx_dma_channel = NULL;
+uint32_t USART0_dma_periph = 0;
+uint32_t USART0_tx_dma_channel = 0;
+uint32_t USART0_rx_dma_channel = 0;
 
-uint32_t USART1_dma_periph = NULL;
-uint32_t USART1_tx_dma_channel = NULL;
-uint32_t USART1_rx_dma_channel = NULL;
+uint32_t USART1_dma_periph = 0;
+uint32_t USART1_tx_dma_channel = 0;
+uint32_t USART1_rx_dma_channel = 0;
 
-uint32_t USART2_dma_periph = NULL;
-uint32_t USART2_tx_dma_channel = NULL;
-uint32_t USART2_rx_dma_channel = NULL;
+uint32_t USART2_dma_periph = 0;
+uint32_t USART2_tx_dma_channel = 0;
+uint32_t USART2_rx_dma_channel = 0;
 
-uint32_t UART3_dma_periph = NULL;
-uint32_t UART3_tx_dma_channel = NULL;
-uint32_t UART3_rx_dma_channel = NULL;
+uint32_t UART3_dma_periph = 0;
+uint32_t UART3_tx_dma_channel = 0;
+uint32_t UART3_rx_dma_channel = 0;
 
-uint32_t UART4_dma_periph = NULL;
-uint32_t UART4_tx_dma_channel = NULL;
-uint32_t UART4_rx_dma_channel = NULL;
+uint32_t UART4_dma_periph = 0;
+uint32_t UART4_tx_dma_channel = 0;
+uint32_t UART4_rx_dma_channel = 0;
 
-uint32_t USART5_dma_periph = NULL;
-uint32_t USART5_tx_dma_channel = NULL;
-uint32_t USART5_rx_dma_channel = NULL;
+uint32_t USART5_dma_periph = 0;
+uint32_t USART5_tx_dma_channel = 0;
+uint32_t USART5_rx_dma_channel = 0;
 
-uint32_t UART6_dma_periph = NULL;
-uint32_t UART6_tx_dma_channel = NULL;
-uint32_t UART6_rx_dma_channel = NULL;
+uint32_t UART6_dma_periph = 0;
+uint32_t UART6_tx_dma_channel = 0;
+uint32_t UART6_rx_dma_channel = 0;
 
-uint32_t UART7_dma_periph = NULL;
-uint32_t UART7_tx_dma_channel = NULL;
-uint32_t UART7_rx_dma_channel = NULL;
+uint32_t UART7_dma_periph = 0;
+uint32_t UART7_tx_dma_channel = 0;
+uint32_t UART7_rx_dma_channel = 0;
 
 static void usart_dma_tx_set(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enum channelx){
          if( usart_periph == USART0) USART0_dma_periph = dma_periph, USART0_tx_dma_channel = channelx;
@@ -293,8 +293,8 @@ void usart_dma_rx_init(uint32_t usart_periph,uint32_t dma_periph,dma_channel_enu
  * @param len   数据长度 [1,255]
  */
 void usart_dma_send(uint32_t usart_periph,uint8_t * data,uint8_t len){
-    uint32_t dma_periph = NULL;
-    dma_channel_enum channelx = NULL;
+    uint32_t dma_periph = 0;
+    dma_channel_enum channelx = 0;
     usart_dma_tx_select(usart_periph,&dma_periph,&channelx);
 
     dma_memory_address_config(dma_periph,channelx,DMA_MEMORY_0,(uint32_t)data);
@@ -307,6 +307,70 @@ void usart_dma_send(uint32_t usart_periph,uint8_t * data,uint8_t len){
 #endif
 
 #ifdef USART_PRINT
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
+int _write(int fd, char *ptr, int len){
+    UNUSED(fd);
+
+    #if USART_PRINT == 0
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(USART0,(uint8_t*)ptr,len);
+        #else
+            send_array(USART0,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 1
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(USART1,(uint8_t*)ptr,len);
+        #else
+            send_array(USART1,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 2
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(USART2,(uint8_t*)ptr,len);
+        #else
+            send_array(USART2,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 3
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(UART3,(uint8_t*)ptr,len);
+        #else
+            send_array(UART3,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 4
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(UART4,(uint8_t*)ptr,len);
+        #else
+            send_array(UART4,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 5
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(USART5,(uint8_t*)ptr,len);
+        #else
+            send_array(USART5,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 6
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(UART6,(uint8_t*)ptr,len);
+        #else
+            send_array(UART6,(uint8_t *)ptr,len);
+        #endif
+    #endif
+    #if USART_PRINT == 7
+        #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
+            usart_dma_send(UART7,(uint8_t*)ptr,len);
+        #else
+            send_array(UART7,(uint8_t *)ptr,len);
+        #endif
+    #endif
+
+    return len;
+}
+#else
 int fputc(int ch,FILE *f){
     #if USART_PRINT == 0
         #if defined(USART_PRINT_DMA) && USART_PRINT_DMA == USART_PRINT
@@ -366,6 +430,7 @@ int fputc(int ch,FILE *f){
     #endif
     return ch;
 }
+#endif
 #endif
 
 

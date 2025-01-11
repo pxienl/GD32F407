@@ -364,6 +364,12 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 #include "gd32f4xx_libopt.h"
 #endif /* USE_STDPERIPH_DRIVER */
 
+#ifdef __GNUC__
+#if !defined(UNUSED)
+#define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
+#endif /* UNUSED */
+#endif
+
 #ifdef __cplusplus
 }
 #endif

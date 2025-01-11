@@ -3,3 +3,5 @@ Project/Objects/
 Project/.vscode/
 Project/*.uvguix.*
 Project/*.uvoptx
+
+build/
